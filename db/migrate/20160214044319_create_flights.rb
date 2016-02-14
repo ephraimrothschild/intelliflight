@@ -26,11 +26,11 @@ class CreateFlights < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    csv_text = File.read('C:/Users/Ephraim/Downloads/971753140_T_ONTIME 2.csv')
+    csv_text = File.read('/971753140_T_ONTIME 2.csv')
     csv = CSV.parse(csv_text, :headers => true)
     csv.each do |r|
       Flight.create!(
-          departure_date: r["DEST_CITY_NAME"],
+          departure_date: r["FL_DATE"],
           carrier: r["CARRIER"],
           flight_num: r["FL_NUM"],
           crs_dep_time: r["CRS_DEP_TIME"],

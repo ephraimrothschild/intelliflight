@@ -1,0 +1,234 @@
+<!--<nav id="mainNav" class="navbar navbar-default navbar-fixed-top" xmlns="http://www.w3.org/1999/html">-->
+  <!--<div class="container-fluid">-->
+    <!--&lt;!&ndash; Brand and toggle get grouped for better mobile display &ndash;&gt;-->
+    <!--<div class="navbar-header">-->
+      <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">-->
+        <!--<span class="sr-only">Toggle navigation</span>-->
+        <!--<span class="icon-bar"></span>-->
+        <!--<span class="icon-bar"></span>-->
+        <!--<span class="icon-bar"></span>-->
+      <!--</button>-->
+      <!--<a class="navbar-brand page-scroll" href="#page-top">IntelliFlight</a>-->
+    <!--</div>-->
+
+    <!--&lt;!&ndash; Collect the nav links, forms, and other content for toggling &ndash;&gt;-->
+    <!--<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">-->
+      <!--<ul class="nav navbar-nav navbar-right">-->
+        <!--<li>-->
+          <!--<a class="page-scroll" href="#about">About</a>-->
+        <!--</li>-->
+        <!--<li>-->
+          <!--<a class="page-scroll" href="#experience">Experience</a>-->
+        <!--</li>-->
+        <!--<li>-->
+          <!--<a class="page-scroll" href="#portfolio">Portfolio</a>-->
+        <!--</li>-->
+        <!--<li>-->
+          <!--<a class="page-scroll" href="#contact">Contact</a>-->
+        <!--</li>-->
+      <!--</ul>-->
+    <!--</div>-->
+    <!--&lt;!&ndash; /.navbar-collapse &ndash;&gt;-->
+  <!--</div>-->
+  <!--&lt;!&ndash; /.container-fluid &ndash;&gt;-->
+<!--</nav>-->
+<header class="parallax-window" data-parallax="scroll" data-image-src="<%=image_path('fuzzy_plane.jpg')%>" style="top: 0 !important; height: 100%">
+  <div class="header-content" style="padding-top:330px">
+    <div id="header-text-box" class="header-content-inner" style="min-height: 100%">
+      <h1 style="text-align:center;font-weight:400;">Find the least crappy flights!!</h1>
+      <form id="form">
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-3">
+            <label><b style="color: white">Origin</b></label>
+            <select class="full-width" name="origin" id="org_select" data-init-plugin="select2">
+              <% Airport.all.each do |airport| %>
+                  <option value="<%= airport.city %>"><%= airport.city %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label><b></b></label>
+            <input type="text" class="form-control" name="date" data-provide="datepicker" placeholder="Date" style="padding:15px; margin-top:5px;" />
+          </div>
+          <div class="col-md-3">
+            <label><b style="color:white">Destination</b></label>
+            <select class="full-width" name="destination" id="dest_select" data-init-plugin="select2">
+              <% Airport.all.each do |airport| %>
+                  <option value="<%= airport.city %>"><%= airport.city %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label><b></b></label>
+            <button class="btn btn-success" type="submit" style="margin-top: 25px;">Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="results"></div>
+</header>
+<!--<section style="min-height: 500px">-->
+  <!-- -->
+
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!--<div class="modal-header">-->
+      <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+      <!--<h4 class="modal-title">Modal title</h4>-->
+      <!--</div>-->
+      <div class="modal-body" id="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="weather"></div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.simpleWeather/3.1.0/jquery.simpleWeather.min.js"></script>
+
+<!--</section>-->
+
+<script>
+    $("#org_select").select2();
+    $("#dest_select").select2();
+    $(function() {
+        $('input[name="date"]').datepicker();
+    });
+
+    $("#form").submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/find_flight",
+            data: $('#form').serialize(),
+            success: function(response){
+                console.log(response);
+                $("#modal-body").html(response);
+                $('#modal').modal({show: true});
+            }
+        });
+    });
+
+
+    $("#form").submit(function(e) {
+        $.simpleWeather({
+            location: $("#org_select").val(),
+            woeid: '',
+            unit: 'f',
+            success: function(weather) {
+                html = '<h2><i class="icon-'+weather.code+'"></i> '+weather.temp+'&deg;'+weather.units.temp+'</h2>';
+                html += '<ul><li>'+weather.city+', '+weather.region+'</li>';
+                html += '<li class="currently">'+weather.currently+'</li>';
+                html += '<li>'+weather.wind.direction+' '+weather.wind.speed+' '+weather.units.speed+'</li></ul>';
+
+                $("#weather").html(html);
+            },
+            error: function(error) {
+                $("#weather").html('<p>'+error+'</p>');
+            }
+        });
+    });
+
+
+
+</script>
+<style>
+    #weather {
+        width: 500px;
+        margin: 0px auto;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    i {
+        color: #fff;
+        font-family: weather;
+        font-size: 150px;
+        font-weight: normal;
+        font-style: normal;
+        line-height: 1.0;
+        text-transform: none;
+    }
+
+    .icon-0:before { content: ":"; }
+    .icon-1:before { content: "p"; }
+    .icon-2:before { content: "S"; }
+    .icon-3:before { content: "Q"; }
+    .icon-4:before { content: "S"; }
+    .icon-5:before { content: "W"; }
+    .icon-6:before { content: "W"; }
+    .icon-7:before { content: "W"; }
+    .icon-8:before { content: "W"; }
+    .icon-9:before { content: "I"; }
+    .icon-10:before { content: "W"; }
+    .icon-11:before { content: "I"; }
+    .icon-12:before { content: "I"; }
+    .icon-13:before { content: "I"; }
+    .icon-14:before { content: "I"; }
+    .icon-15:before { content: "W"; }
+    .icon-16:before { content: "I"; }
+    .icon-17:before { content: "W"; }
+    .icon-18:before { content: "U"; }
+    .icon-19:before { content: "Z"; }
+    .icon-20:before { content: "Z"; }
+    .icon-21:before { content: "Z"; }
+    .icon-22:before { content: "Z"; }
+    .icon-23:before { content: "Z"; }
+    .icon-24:before { content: "E"; }
+    .icon-25:before { content: "E"; }
+    .icon-26:before { content: "3"; }
+    .icon-27:before { content: "a"; }
+    .icon-28:before { content: "A"; }
+    .icon-29:before { content: "a"; }
+    .icon-30:before { content: "A"; }
+    .icon-31:before { content: "6"; }
+    .icon-32:before { content: "1"; }
+    .icon-33:before { content: "6"; }
+    .icon-34:before { content: "1"; }
+    .icon-35:before { content: "W"; }
+    .icon-36:before { content: "1"; }
+    .icon-37:before { content: "S"; }
+    .icon-38:before { content: "S"; }
+    .icon-39:before { content: "S"; }
+    .icon-40:before { content: "M"; }
+    .icon-41:before { content: "W"; }
+    .icon-42:before { content: "I"; }
+    .icon-43:before { content: "W"; }
+    .icon-44:before { content: "a"; }
+    .icon-45:before { content: "S"; }
+    .icon-46:before { content: "U"; }
+    .icon-47:before { content: "S"; }
+
+    #weather h2 {
+        margin: 0 0 8px;
+        color: #fff;
+        font-size: 100px;
+        font-weight: 300;
+        text-align: center;
+        text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    #weather ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    #weather li {
+        background: #fff;
+        background: rgba(255,255,255,0.90);
+        padding: 20px;
+        display: inline-block;
+        border-radius: 5px;
+    }
+
+    #weather .currently {
+        margin: 0 20px;
+    }
+
+</style>
+

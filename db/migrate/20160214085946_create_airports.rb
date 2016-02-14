@@ -8,7 +8,7 @@ class CreateAirports < ActiveRecord::Migration
     end
 
     regexp = /"([a-zA-Z0-9]{3})","(.+): (.+)?"/
-    File.open("/airports.txt", "r") do |f|
+    File.open("https://raw.githubusercontent.com/ephraimrothschild/intelliflight/master/public/airports.txt", "r") do |f|
       f.each_line do |line|
         match = regexp.match(line)
         a = Airport.new(code: $1, city: $2, airport_name: $3)

@@ -26,7 +26,7 @@ class CreateFlights < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    csv_text = File.read('/971753140_T_ONTIME_2.csv')
+    csv_text = File.read('https://raw.githubusercontent.com/ephraimrothschild/intelliflight/master/public/971753140_T_ONTIME_2.csv')
     csv = CSV.parse(csv_text, :headers => true)
     csv.each do |r|
       Flight.create!(

@@ -2,7 +2,7 @@ require 'csv'
 
 class Flight < ActiveRecord::Base
   def self.import_csv_flight_data
-    csv_text = File.read('C:/Users/Ephraim/Downloads/971753140_T_ONTIME_3.csv')
+    csv_text = File.read('https://raw.githubusercontent.com/ephraimrothschild/intelliflight/master/public/971753140_T_ONTIME_2.csv')
     csv = CSV.parse(csv_text, :headers => true)
     puts "Started importing data..."
     csv.each do |r|

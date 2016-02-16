@@ -1,41 +1,8 @@
-<!--<nav id="mainNav" class="navbar navbar-default navbar-fixed-top" xmlns="http://www.w3.org/1999/html">-->
-  <!--<div class="container-fluid">-->
-    <!--&lt;!&ndash; Brand and toggle get grouped for better mobile display &ndash;&gt;-->
-    <!--<div class="navbar-header">-->
-      <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">-->
-        <!--<span class="sr-only">Toggle navigation</span>-->
-        <!--<span class="icon-bar"></span>-->
-        <!--<span class="icon-bar"></span>-->
-        <!--<span class="icon-bar"></span>-->
-      <!--</button>-->
-      <!--<a class="navbar-brand page-scroll" href="#page-top">IntelliFlight</a>-->
-    <!--</div>-->
-
-    <!--&lt;!&ndash; Collect the nav links, forms, and other content for toggling &ndash;&gt;-->
-    <!--<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">-->
-      <!--<ul class="nav navbar-nav navbar-right">-->
-        <!--<li>-->
-          <!--<a class="page-scroll" href="#about">About</a>-->
-        <!--</li>-->
-        <!--<li>-->
-          <!--<a class="page-scroll" href="#experience">Experience</a>-->
-        <!--</li>-->
-        <!--<li>-->
-          <!--<a class="page-scroll" href="#portfolio">Portfolio</a>-->
-        <!--</li>-->
-        <!--<li>-->
-          <!--<a class="page-scroll" href="#contact">Contact</a>-->
-        <!--</li>-->
-      <!--</ul>-->
-    <!--</div>-->
-    <!--&lt;!&ndash; /.navbar-collapse &ndash;&gt;-->
-  <!--</div>-->
-  <!--&lt;!&ndash; /.container-fluid &ndash;&gt;-->
-<!--</nav>-->
 <header class="parallax-window" data-parallax="scroll" data-image-src="<%=image_path('fuzzy_plane.jpg')%>" style="top: 0 !important; height: 100%">
-  <div class="header-content" style="padding-top:330px">
+  <div class="header-content" style="padding-top:260px">
     <div id="header-text-box" class="header-content-inner" style="min-height: 100%">
-      <h1 style="text-align:center;font-weight:400;">Find the least crappy flights!!</h1>
+      <h1 style="text-align:center;font-weight:400;font-size:60px"><b>IntelliFlight</b></h1>
+      <h1 style="text-align:center;font-weight:400;">Find the least miserable flights.</h1>
       <form id="form">
         <div class="row">
           <div class="col-md-2"></div>
@@ -76,6 +43,7 @@
 <div class="modal fade" id="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
+      <div id="weather"></div>
       <!--<div class="modal-header">-->
       <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
       <!--<h4 class="modal-title">Modal title</h4>-->
@@ -89,8 +57,6 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="weather"></div>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.simpleWeather/3.1.0/jquery.simpleWeather.min.js"></script>
 
 <!--</section>-->
 
@@ -110,29 +76,28 @@
                 console.log(response);
                 $("#modal-body").html(response);
                 $('#modal').modal({show: true});
+                $.simpleWeather({
+                    location: $("#org_select").val(),
+                    woeid: '',
+                    unit: 'f',
+                    success: function(weather) {
+                        html = '<h2><i class="icon-'+weather.code+'"></i> '+weather.temp+'&deg;'+weather.units.temp+'</h2>';
+                        html += '<ul><li>'+weather.city+', '+weather.region+'</li>';
+                        html += '<li class="currently">'+weather.currently+'</li>';
+                        html += '<li>'+weather.wind.direction+' '+weather.wind.speed+' '+weather.units.speed+'</li></ul>';
+
+                        $("#weather").html(html);
+                        console.log("potoato");
+                    },
+                    error: function(error) {
+                        $("#weather").html('<p>'+error+'</p>');
+                    }
+                });
             }
         });
     });
 
 
-    $("#form").submit(function(e) {
-        $.simpleWeather({
-            location: $("#org_select").val(),
-            woeid: '',
-            unit: 'f',
-            success: function(weather) {
-                html = '<h2><i class="icon-'+weather.code+'"></i> '+weather.temp+'&deg;'+weather.units.temp+'</h2>';
-                html += '<ul><li>'+weather.city+', '+weather.region+'</li>';
-                html += '<li class="currently">'+weather.currently+'</li>';
-                html += '<li>'+weather.wind.direction+' '+weather.wind.speed+' '+weather.units.speed+'</li></ul>';
-
-                $("#weather").html(html);
-            },
-            error: function(error) {
-                $("#weather").html('<p>'+error+'</p>');
-            }
-        });
-    });
 
 
 
@@ -146,7 +111,8 @@
     }
 
     i {
-        color: #fff;
+        color: #000;
+        visibility: hidden;
         font-family: weather;
         font-size: 150px;
         font-weight: normal;
@@ -206,7 +172,7 @@
 
     #weather h2 {
         margin: 0 0 8px;
-        color: #fff;
+        color: #000;
         font-size: 100px;
         font-weight: 300;
         text-align: center;
@@ -219,7 +185,7 @@
     }
 
     #weather li {
-        background: #fff;
+        background: #000;
         background: rgba(255,255,255,0.90);
         padding: 20px;
         display: inline-block;

@@ -18,3 +18,4 @@
 //= require select2
 //= require bootstrap-tagsinput
 //= require bootbox
+//= require jquery.simpleWeather
